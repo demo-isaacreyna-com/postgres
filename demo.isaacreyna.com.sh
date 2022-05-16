@@ -4,14 +4,32 @@ set -e
 
 # Sets up demo.isaacreyna.com
 function main() {
+    create_env_file
     create_pgadmin_servers
     start_app
     run_migrations
 }
 
+function create_env_file() {
+    if [[ ! -f .env ]]; then
+        cat << EOF > .env
+COMPOSE_PROJECT_NAME=
+POSTGRES_HOST=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+PGADMIN_DEFAULT_EMAIL=
+PGADMIN_DEFAULT_PASSWORD=
+PORT=
+EOF
+        echo "NOTICE: .env created. Edit .env and set values"
+        exit 1
+    fi
+}
+
 function create_pgadmin_servers() {
     if [[ ! -f .env ]]; then
-        echo "Erro: .env file not found."
+        echo "Error: .env file not found."
         exit 1
     fi
 
