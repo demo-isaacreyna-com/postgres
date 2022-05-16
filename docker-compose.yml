@@ -11,9 +11,25 @@ services:
             POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
             POSTGRES_USER: ${POSTGRES_USER:-admin_sa}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin8520}
-            POSTGRES_DB: ${POSTGRES_DB:-admin_db}
+            POSTGRES_DB: ${POSTGRES_DB:-demo}
         volumes:
             - ./initialize-database.sh:/docker-entrypoint-initdb.d/initdb.sh
+        profiles:
+            - database
+            - backend
+            - all
+    django:
+        image: isaacdanielreyna/django:0.1.0
+        container_name: django
+        ports:
+            - "8000:8000"
+        environment:
+            POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+            POSTGRES_USER: ${POSTGRES_USER:-admin_sa}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin8520}
+            POSTGRES_DB: ${POSTGRES_DB:-demo}
+        depends_on:
+            - "postgres"
         profiles:
             - backend
             - all
@@ -21,7 +37,7 @@ services:
         image: dpage/pgadmin4:latest
         container_name: pgadmin
         ports:
-            - "80:80"
+            - "5433:80"
         environment:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin8520}
@@ -30,5 +46,16 @@ services:
         depends_on:
             - "postgres"
         profiles:
+            - database
             - frontend
+            - all
+    react:
+        image: isaacdanielreyna/react-sandbox:0.1.0
+        container_name: react
+        ports:
+            - "1337:80"
+        depends_on:
+            - "postgres"
+        profiles:
+            - backend
             - all
