@@ -6,9 +6,15 @@ set -e
 function main() {
     create_pgadmin_servers
     start_app
+    run_migrations
 }
 
 function create_pgadmin_servers() {
+    if [[ ! -f .env ]]; then
+        echo "Erro: .env file not found."
+        exit 1
+    fi
+
     source .env
     cat << EOF > servers.json
 {
@@ -29,7 +35,11 @@ EOF
 
 function start_app() {
     docker-compose down
-    docker-comopse --profile all up -d
+    docker-compose --profile all up -d
+}
+
+function run_migrations() {
+     docker exec -d django python manage.py migrate 
 }
 
 main "$@"
