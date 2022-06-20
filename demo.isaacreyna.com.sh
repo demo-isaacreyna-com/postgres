@@ -5,9 +5,59 @@ set -e
 # Sets up demo.isaacreyna.com
 function main() {
     create_env_file
+    validate_env_file
     create_pgadmin_servers
     start_app
     run_migrations
+}
+
+function validate_env_file() {
+    if [[ ! -f .env ]]; then
+        echo "Error: .env does not exist!"
+        exit 1
+    else
+        source .env
+
+        if [[ -z "${COMPOSE_PROJECT_NAME}" ]]; then
+            echo "Error: COMPOSE_PROJECT_NAME is not set"
+            exit 1
+        fi
+
+        if [[ -z "${POSTGRES_HOST}" ]]; then
+            echo "Error: POSTGRES_HOST is not set"
+            exit 1
+        fi
+
+        if [[ -z "${POSTGRES_USER}" ]]; then
+            echo "Error: POSTGRES_USER is not set"
+            exit 1
+        fi
+
+        if [[ -z "${POSTGRES_PASSWORD}" ]]; then
+            echo "Error: POSTGRES_PASSWORD is not set"
+            exit 1
+        fi
+
+        if [[ -z "${POSTGRES_DB}" ]]; then
+            echo "Error: POSTGRES_DB is not set"
+            exit 1
+        fi
+
+        if [[ -z "${PGADMIN_DEFAULT_EMAIL}" ]]; then
+            echo "Error: PGADMIN_DEFAULT_EMAIL is not set"
+            exit 1
+        fi
+
+        if [[ -z "${PGADMIN_DEFAULT_PASSWORD}" ]]; then
+            echo "Error: PGADMIN_DEFAULT_PASSWORD is not set"
+            exit 1
+        fi
+
+        if [[ -z "${PORT}" ]]; then
+            echo "Error: PORT is not set"
+            exit 1
+        fi
+    fi
 }
 
 function create_env_file() {

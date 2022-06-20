@@ -19,6 +19,8 @@ services:
             - backend
             - all
     django:
+        build:
+            context: ../django
         image: isaacdanielreyna/django:0.1.0
         container_name: django
         ports:
@@ -50,6 +52,8 @@ services:
             - frontend
             - all
     react:
+        build: 
+            context: ../react-sandbox
         image: isaacdanielreyna/react-sandbox:0.1.0
         container_name: react
         ports:
