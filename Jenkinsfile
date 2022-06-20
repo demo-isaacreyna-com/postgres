@@ -9,6 +9,9 @@ pipeline {
     }
 
     environment {
+        GIT_BRANCH = 'main'
+        CREDENTIALS_GITHUB = 'github-isaacdanielreyna'
+        GIT_URL = 'https://github.com/demo-isaacreyna-com/postgres.git'
         IMAGE = 'postgres'
         TAG = '13'
         CONTAINER_NAME = 'postgres'
@@ -21,6 +24,23 @@ pipeline {
             steps {
                 deleteDir()
                 sh 'ls -al'
+            }
+        }
+
+        stage('Git Checkout') {
+            steps {
+                script {
+                    // Determine if feature branch or a pull request
+                    if (env.CHANGE_BRANCH) {
+                        GIT_BRANCH = env.CHANGE_BRANCH
+                    } else if (env.BRANCH_NAME) {
+                        GIT_BRANCH = env.BRANCH_NAME
+                    }
+                }
+                echo "GIT_BRANCH: ${GIT_BRANCH}"
+                git branch: "${GIT_BRANCH}",
+                credentialsId: "${CREDENTIALS_GITHUB}",
+                url: "${GIT_URL}"
             }
         }
 
